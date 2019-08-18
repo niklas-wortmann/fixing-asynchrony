@@ -1,0 +1,12 @@
+.table-data {
+    animation: background-fade 3s forwards;
+}
+
+@keyframes background-fade {
+    50% {
+        background:red;
+    }
+    100% {
+        background:white;
+    }
+}
