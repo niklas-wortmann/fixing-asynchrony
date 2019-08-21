@@ -2,6 +2,10 @@
     animation: background-fade 3s forwards;
 }
 
+html{
+    min-height: 1000px;
+}
+
 @keyframes background-fade {
     50% {
         background:red;
