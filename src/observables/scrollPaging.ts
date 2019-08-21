@@ -16,21 +16,19 @@ const http$ = (url: string) => {
     return ajax.get(url);
 };
 
-const scrollDown$ = fromEvent(document, 'scroll')
+const scrollingElement$ = fromEvent(document, 'scroll')
     .pipe(
         filter((e: any) => !!e && !!e.target.scrollingElement),
         sampleTime(500),
-        map((e: any) => e.target.scrollingElement),
+        map((e: any) => e.target.scrollingElement)
+    );
+
+const scrollDown$ = scrollingElement$.pipe(
         filter((e: any) => e.scrollTop + e.clientHeight >= e.scrollHeight),
         mapTo({scrollDirection: 'DOWN'})
     );
 
-const scrollUp$ = fromEvent(document, 'scroll')
-    .pipe(
-        filter((e: any) => !!e && !!e.target.scrollingElement),
-        sampleTime(500),
-        tap(console.log),
-        map((e: any) => e.target.scrollingElement),
+const scrollUp$ = scrollingElement$.pipe(
         filter((e: any) => e.scrollTop === e.offsetTop),
         mapTo({scrollDirection: 'UP'})
     );
