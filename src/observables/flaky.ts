@@ -1,14 +1,13 @@
-import {ajax} from 'rxjs/ajax';
-import {delayWhen, retryWhen, tap, timeout} from 'rxjs/operators';
-import {timer} from 'rxjs';
+import {delay, retryWhen, retry, tap, timeout} from 'rxjs/operators';
+import {http$} from '../helpers/helper';
 
-export const flaky$ = ajax.getJSON('http://localhost:8080/flaky').pipe(
+export const flaky$ = http$('http://localhost:8080/flaky').pipe(
     timeout(5000),
     // retry(2)
     retryWhen(errors =>
         errors.pipe(
             tap(val => console.log(`Value ${val} was too high!`)),
-            delayWhen(val => timer( 10000))
+            delay(1000)
         )
     )
 );

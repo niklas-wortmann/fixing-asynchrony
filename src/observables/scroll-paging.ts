@@ -7,14 +7,9 @@ import {
     mapTo,
     sampleTime,
     scan,
-    startWith,
-    tap
+    startWith, tap,
 } from 'rxjs/operators';
-import {ajax} from 'rxjs/ajax';
-
-const http$ = (url: string) => {
-    return ajax.get(url);
-};
+import {aggregatePages, BeerPage, countPage, http$, isScrolledDown, isScrolledUp} from '../helpers/helper';
 
 const scrollingElement$ = fromEvent(document, 'scroll')
     .pipe(
@@ -24,26 +19,22 @@ const scrollingElement$ = fromEvent(document, 'scroll')
     );
 
 const scrollDown$ = scrollingElement$.pipe(
-        filter((e: any) => e.scrollTop + e.clientHeight >= e.scrollHeight),
-        mapTo({scrollDirection: 'DOWN'})
-    );
+    filter(isScrolledDown),
+    mapTo({scrollDirection: 'DOWN'})
+);
 
 const scrollUp$ = scrollingElement$.pipe(
-        filter((e: any) => e.scrollTop === e.offsetTop),
-        mapTo({scrollDirection: 'UP'})
-    );
+    filter(isScrolledUp),
+    mapTo({scrollDirection: 'UP'})
+);
 
 export const pagingOnScroll$ = merge(scrollDown$, scrollUp$).pipe(
     startWith({scrollDirection: 'DOWN'}),
-    scan((acc, curr) => {
-        if (curr.scrollDirection === 'UP') {
-            return {...acc, ...curr, page: acc.page !== 0 ? acc.page - 1 : 0};
-        } else {
-            return {...acc, ...curr, page: acc.page + 1};
-        }
-    }, {scrollDirection: 'DOWN', position: 0, page: 0}),
+    scan(countPage, {scrollDirection: 'DOWN', page: 0}),
     distinctUntilKeyChanged('page'),
     exhaustMap(({page}) =>
         http$(`http://localhost:8080/pagedBeer/${page}`)
-            .pipe(map(response => response.response.beers))),
+            .pipe(map((response) => response.response as BeerPage))),
+    scan(aggregatePages, {list: [], page: 0}),
+    map(pages => pages.list)
 );
