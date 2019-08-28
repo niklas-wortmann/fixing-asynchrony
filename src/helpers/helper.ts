@@ -104,6 +104,8 @@ export const aggregatePages = (acc: { list: any[], page: number }, curr: BeerPag
     }
 };
 
+export const initialAggregatedPages: { list: any[], page: number } = {list: [], page: 0};
+
 export const countPage = (acc: { scrollDirection: 'DOWN' | 'UP', page: number }, curr: { scrollDirection: 'DOWN' | 'UP' }) => {
     if (curr.scrollDirection === 'UP') {
         return {...acc, ...curr, page: acc.page !== 0 ? acc.page - 1 : 0};
@@ -111,3 +113,5 @@ export const countPage = (acc: { scrollDirection: 'DOWN' | 'UP', page: number },
         return {...acc, ...curr, page: acc.page + 1};
     }
 };
+
+export const initialPageCount: { scrollDirection: 'DOWN' | 'UP', page: number } = {scrollDirection: 'DOWN', page: 0};

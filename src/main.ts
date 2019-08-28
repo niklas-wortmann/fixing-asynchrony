@@ -5,11 +5,3 @@ import {pagingOnScroll$} from './observables/scroll-paging';
 
 renderTableFrame();
 
-
-merge(pagingOnScroll$).pipe(
-    tap(clearTableData),
-    tap(appendEntries),
-).subscribe();
-
-// Pagination mit Scrolling
-// Websocket with optimistic update
