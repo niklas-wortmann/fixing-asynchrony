@@ -1,4 +1,6 @@
 import {ajax} from 'rxjs/ajax';
+import {pipe} from 'rxjs';
+import {tap} from 'rxjs/operators';
 
 export const renderTableFrame = () => {
     document.getElementById('table-container').innerHTML = `
@@ -115,3 +117,20 @@ export const countPage = (acc: { scrollDirection: 'DOWN' | 'UP', page: number },
 };
 
 export const initialPageCount: { scrollDirection: 'DOWN' | 'UP', page: number } = {scrollDirection: 'DOWN', page: 0};
+
+
+export const renderPagedDate = pipe(
+    tap(clearTableData),
+    tap(appendEntries)
+);
+
+export const renderEverythingElse = pipe(
+    tap((x: any[]) =>
+        x.forEach(renderTableRow)
+    ));
+
+export const enum IMPORTANT_URLS {
+    FLAKY = 'http://localhost:8080/flaky',
+    POLLING = 'http://localhost:8080/flaky',
+    SCROLLING = 'http://localhost:8080/pagedBeer/'
+}
