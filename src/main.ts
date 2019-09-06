@@ -7,4 +7,3 @@ import {flaky$} from './observables/flaky';
 
 renderTableFrame();
 
-flaky$.subscribe();

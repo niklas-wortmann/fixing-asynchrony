@@ -20,32 +20,10 @@ import {
     isScrolledUp
 } from '../helpers/helper';
 
-const scrollingElement$ = fromEvent(document, 'scroll')
-    .pipe(
-        sampleTime(300),
-        map((e: any) => e.target.scrollingElement)
-    );
+const scrollingElement$ = fromEvent(document, 'scroll');
 
-const scrollDown$ = scrollingElement$.pipe(
-    filter(isScrolledDown),
-    mapTo({scrollDirection: 'DOWN'})
-);
+const scrollDown$ = scrollingElement$;
 
-const scrollUp$ = scrollingElement$.pipe(
-    filter(isScrolledUp),
-    mapTo({scrollDirection: 'UP'})
-);
+const scrollUp$ = scrollingElement$;
 
-export const pagingOnScroll$ = merge(scrollDown$, scrollUp$).pipe(
-    startWith({scrollDirection: 'DOWN'}),
-    scan(countPage, initialPageCount),
-    exhaustMap(({page}) =>
-        http$(IMPORTANT_URLS.SCROLLING + page)
-            .pipe(
-                map((response) => response.response as BeerPage),
-                catchError(x => EMPTY)
-            )
-        ),
-    scan(aggregatePages, initialAggregatedPages),
-    map(res => res.list)
-    );
+export const pagingOnScroll$ = merge(scrollDown$, scrollUp$);
